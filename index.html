@@ -1,23 +1,370 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Home</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <!--
-      Need a visual blank slate?
-      Remove all code in `styles.css`!
-    -->
-    <link rel="stylesheet" href="styles.css" />
-    <script type="module" src="script.js"></script>
-  </head>
-  <body>
-    <nav>
-      <a href="/" aria-current="page">Home</a>
-      <a href="/page2.html">Other page</a>
-    </nav>
-    <main>
-      <h1>Home page</h1>
-    </main>
-  </body>
-</html>
+
+  <style>
+    /* 기본 스타일 재정의 */
+    body { font-family: 'Noto Sans KR', sans-serif; line-height: 1.8; margin: 0; padding: 0; background: #f0f4f8; color: #333; }
+    header { max-width: 900px; margin: 20px auto; padding: 30px 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; }
+    section { max-width: 900px; margin: 20px auto; padding: 25px 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    h1 { color: #004aad; font-size: 2.5em; margin-bottom: 10px; }
+    h2 { color: #0056b3; font-size: 2em; margin-top: 30px; border-bottom: 2px solid #e0eaff; padding-bottom: 10px; }
+    h3 { color: #0070f3; font-size: 1.5em; margin-top: 20px; }
+    p { margin-bottom: 1em; text-align: justify; }
+    ul, ol { padding-left: 25px; margin-bottom: 1.5em; }
+    li { margin-bottom: 0.5em; line-height: 1.6; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; font-size: 0.95em; }
+    th { background: #e0f0ff; color: #004aad; font-weight: bold; text-align: center; }
+    a { color: #0070f3; text-decoration: none; transition: color 0.3s; }
+    a:hover { color: #005bb5; text-decoration: underline; }
+    /* CTA 버튼 스타일 */
+    .btn-cta {
+      display: inline-block;
+      padding: 15px 30px;
+      background: #0070f3;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1em;
+      border-radius: 30px;
+      box-shadow: 0 6px 12px rgba(0, 112, 243, 0.4);
+      transition: all 0.3s ease;
+      text-align: center;
+      margin-top: 20px;
+      cursor: pointer;
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .btn-cta:hover {
+      background: #005bb5;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 112, 243, 0.5);
+    }
+    /* 내부 링크용 앵커 스타일 */
+    .anchor {
+      display: block;
+      position: relative;
+      top: -80px; /* 헤더 및 네비게이션 높이 감안 오프셋 */
+      visibility: hidden;
+    }
+    /* Form 스타일 */
+    form { max-width: 700px; margin: 20px auto; padding: 25px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee; }
+    label { display: block; margin-bottom: 8px; font-weight: 700; color: #555; font-size: 0.95em; }
+    input[type="text"], input[type="tel"], input[type="date"], input[type="number"], select, textarea {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+    textarea { resize: vertical; }
+    /* 반응형 디자인 */
+    @media(max-width: 768px) {
+      body { padding: 10px; }
+      header, section, footer { margin: 10px auto; padding: 15px; }
+      h1 { font-size: 2em; }
+      h2 { font-size: 1.8em; }
+      .btn-cta { width: 100%; padding: 15px 0; font-size: 1em; }
+    }
+    /* 섹션 구분선 */
+    section + section { margin-top: 30px; }
+
+    /* 추가 디자인 요소: 그래프 및 인포 박스 */
+    .info-box { background: #eef7ff; padding: 20px; border-left: 5px solid #0070f3; margin: 20px 0; border-radius: 4px; }
+    .info-box p { margin: 0; }
+    .graph-container { text-align: center; margin: 20px 0; }
+    .graph-image { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+    /* 목록 스타일 개선 */
+    ul.checklist li { list-style-type: disc; margin-bottom: 10px; line-height: 1.6; padding-left: 5px; }
+    ol.numbered-list li { list-style-type: decimal; margin-bottom: 10px; line-height: 1.6; padding-left: 5px; }
+  </style>
+
+  <!-- Schema.org MedicalCondition 마크업(JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalCondition",
+    "name": "MRI 실비 보험 적용 기준",
+    "description": "실손의료비 보험에서 MRI 촬영에 대한 보장 범위와 청구 절차에 대한 상세 안내.",
+    "url": "https://도메인/실비보험mri",
+    "associatedRiskFactor": [
+      { "@type": "RiskFactor", "name": "높은 비급여 진료비 부담" }
+    ],
+    "possibleComplication": [
+      { "@type": "MedicalCondition", "name": "정확한 진단 지연" }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <header>
+    <h1>실비 보험 MRI 보장 기준: 2026년 최신 가이드</h1>
+    <p>실손의료비 보험에서 MRI 촬영 비용, 급여/비급여 적용 기준을 명확히 이해하고 현명하게 청구하세요.</p>
+    <button class="btn-cta" onclick="location.href='#contact'">MRI 실비 보험 청구 가이드 받기</button>
+  </header>
+
+  <nav aria-label="페이지 내 이동">
+    <section>
+      <ul style="list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: space-around; background: #f9f9f9; padding: 10px; border-radius: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
+        <li style="margin: 5px 10px;"><a href="#section-introduction">MRI 실비 보험 개요</a></li>
+        <li style="margin: 5px 10px;"><a href="#section-coverage-rules">급여 vs 비급여 기준 분석</a></li>
+        <li style="margin: 5px 10px;"><a href="#section-specific-cases">부위별 MRI 보장 사례 (뇌/척추/관절)</a></li>
+        <li style="margin: 5px 10px;"><a href="#section-4th-gen-silbi">4세대 실비 보험과 MRI</a></li>
+        <li style="margin: 5px 10px;"><a href="#section-claims-guide">청구 방법 및 필요 서류</a></li>
+        <li style="margin: 5px 10px;"><a href="#section-faq">FAQ 및 전문가 조언</a></li>
+      </ul>
+    </section>
+  </nav>
+
+  <!-- 본문 콘텐츠 시작 -->
+
+  <section id="section-introduction">
+    <span id="section-introduction-anchor" class="anchor"></span>
+    <h2>실비 보험과 MRI: 왜 중요한가요?</h2>
+    <p>실손의료비 보험(실비 보험)은 국민 대다수가 가입하고 있는 필수 보험 상품입니다. 의료기술의 발전으로 MRI(자기공명영상) 촬영이 뇌, 척추, 관절 등 신체 내부 진단에 필수적인 검사로 자리 잡았지만, 고가의 검사 비용으로 인해 환자에게 큰 부담이 될 수 있습니다. 특히 2026년 현재 의료 정책이 급변하면서 MRI에 대한 실비 보험 보장 기준이 더욱 중요해지고 있습니다. 이 가이드에서는 최신 기준에 맞춰 실비 보험으로 MRI 비용을 어떻게 보장받을 수 있는지 상세히 안내해 드립니다.</p>
+
+    <div class="info-box">
+      <h3>함께 많이 찾는 키워드:</h3>
+      <p>뇌 MRI 실비 청구, 척추 MRI 실비, MRI 급여 기준, 실손보험 비급여, 실비 보험 4세대 MRI, MRI 비용 실비 보장.</p>
+    </div>
+
+    <p>최근 실비 보험 개편으로 인해 과거와 달리 MRI 촬영에 대한 보장 여부가 급여/비급여 구분과 질병의 심각성 여부에 따라 엄격하게 달라지고 있습니다. 단순 통증이나 예방 차원의 검사는 비급여 항목으로 분류되어 보장이 축소되는 추세입니다.</p>
+
+    <h3>MRI 촬영의 필요성 및 비용 구조</h3>
+    <p>MRI는 X-ray나 CT와 달리 방사선을 사용하지 않고 자장을 이용해 인체 내부의 연부 조직(신경, 근육, 인대 등)을 정밀하게 영상화할 수 있습니다. 뇌졸중, 뇌종양, 척추 디스크, 관절 연골 손상 등 다양한 질병 진단에 결정적인 역할을 합니다. 그러나 1회 촬영에 수십만원에서 100만원 이상에 달하는 높은 비용이 발생하므로 실비 보험 보장 여부를 미리 확인하는 것이 필수적입니다.</p>
+  </section>
+
+  <section id="section-coverage-rules">
+    <span id="section-coverage-rules-anchor" class="anchor"></span>
+    <h2>MRI 급여 vs. 비급여: 보장 기준 상세 분석</h2>
+    <p>실비 보험에서 MRI 비용이 보장되는지 여부를 결정하는 가장 중요한 요소는 국민건강보험공단의 '급여' 항목으로 인정받는지 여부입니다. 2026년 현재 실비 보험 약관은 급여 항목에 대해서는 자기부담금을 제외한 전액(표준형) 또는 80~90%(선택형)을 보장합니다. 반면, 비급여 항목은 보장이 축소되거나 특정 특약이 없으면 보장되지 않는 경우가 많습니다.</p>
+
+    <h3>1. 급여 항목(보장 대상)의 경우</h3>
+    <p>MRI 촬영이 급여 항목으로 인정받기 위해서는 일반적으로 다음과 같은 기준을 충족해야 합니다:</p>
+    <ul class="checklist">
+      <li><strong>질병 확진 목적:</strong> 뇌졸중, 뇌종양, 척수병증 등 심각한 질병이 의심되어 의사가 진단 목적으로 MRI를 처방한 경우. 단순 검진 목적이 아닌 증상에 따른 정밀 검사일 때만 인정됩니다.</li>
+      <li><strong>의사의 진단서 첨부:</strong> MRI 촬영의 필요성을 입증하는 의사의 소견서 또는 진단서가 필요합니다.</li>
+      <li><strong>치료 과정의 일환:</strong> 이미 질병이 확정되어 치료 경과를 관찰하거나 수술 전후 검사로 진행되는 경우.</li>
+    </ul>
+
+    <h3>2. 비급여 항목(보장 축소/제한 대상)의 경우</h3>
+    <p>다음과 같은 경우에는 MRI 촬영이 비급여로 분류되어 실비 보험 보장이 제한되거나 전혀 적용되지 않을 수 있습니다:</p>
+    <ul class="checklist">
+      <li><strong>단순 검진 또는 예방 목적:</strong> 특별한 증상 없이 건강검진의 일환으로 MRI를 촬영하는 경우.</li>
+      <li><strong>미용 목적 또는 단순 통증:</strong> 단순 근육통이나 피로감으로 인해 검사를 하는 경우.</li>
+      <li><strong>특정 질환 예외:</strong> 실비 보험 약관에서 명시적으로 보장하지 않는 일부 질환(예: 단순 편두통)에 대한 MRI 검사.</li>
+    </ul>
+
+    <h3>급여/비급여 구분 변화: 포괄적 급여화 정책</h3>
+    <p>과거에는 MRI 촬영이 대부분 비급여 항목이었으나, 2018년 이후 정부의 건강보험 보장성 강화 정책(일명 '문재인 케어')에 따라 뇌, 뇌혈관, 목, 척추 MRI 등이 단계적으로 급여화되었습니다. 그러나 이는 '의학적 필요성이 인정될 때'에 한정되며, 환자가 임의로 선택한 검진은 여전히 비급여 항목으로 남아있습니다.</p>
+
+    <div class="info-box">
+      <p><strong>전문가 Tip:</strong> 의사가 MRI 촬영을 권유할 때, 반드시 '급여 항목'인지 '비급여 항목'인지 사전에 확인하는 것이 중요합니다. 급여 항목이라면 실비 청구가 비교적 수월하지만, 비급여 항목이라면 보험사별 약관에 따라 보장이 달라질 수 있습니다.</p>
+    </div>
+  </section>
+
+  <section id="section-specific-cases">
+    <span id="section-specific-cases-anchor" class="anchor"></span>
+    <h2>부위별 MRI 실비 보험 적용 사례 분석</h2>
+    <p>MRI 촬영은 신체 부위별로 진단 목적이 다르고, 이에 따라 급여/비급여 기준도 세부적으로 달라집니다. 검색자가 가장 많이 찾는 뇌, 척추, 관절 MRI의 보장 기준을 자세히 살펴봅니다.</p>
+
+    <h3>1. 뇌 MRI (뇌혈관 실비 청구)</h3>
+    <p>뇌 MRI는 뇌졸중, 뇌종양, 치매 진단에 핵심적인 역할을 합니다. 실비 보험에서는 다음과 같은 경우에 보장을 받을 수 있습니다:</p>
+    <ul>
+      <li><strong>급여 기준:</strong> 실신, 경련, 마비 증상, 심한 두통, 의식 장애 등 뇌 질환 의심 증상으로 전문의가 진단을 위해 처방한 경우. 특히 뇌졸중(뇌경색/뇌출혈)이 의심될 때에는 급여 적용이 가능합니다.</li>
+      <li><strong>비급여 기준:</strong> 단순 편두통, 어지러움, 예방 차원의 뇌 건강 검진은 비급여 항목으로 분류될 가능성이 높습니다. 이 경우 4세대 실비 보험에서는 보장이 제한될 수 있습니다.</li>
+    </ul>
+
+    <h3>2. 척추 MRI (허리 통증 실비 청구)</h3>
+    <p>허리 디스크(추간판 탈출증), 척추관 협착증 진단에 척추 MRI가 필수적입니다. 보장 기준은 다음과 같습니다:</p>
+    <ul>
+      <li><strong>급여 기준:</strong> 신경학적 증상(마비, 감각 이상, 근력 저하 등)이 명확하고, CT 또는 X-ray 검사에서 충분한 진단이 어려워 MRI가 필요한 경우.</li>
+      <li><strong>비급여 기준:</strong> 단순 요통(허리 통증)만 있고 신경 증상이 동반되지 않은 경우, 비급여 항목으로 처리될 수 있습니다.</li>
+    </ul>
+
+    <h3>3. 관절 및 기타 부위 MRI</h3>
+    <p>무릎, 어깨, 팔꿈치 등 관절 부위의 인대 손상이나 연골 손상을 진단하는 데 MRI가 사용됩니다. 관절 MRI도 2018년 이후 급여 범위가 확대되었으나, 여전히 세부 기준이 존재합니다.</p>
+    <ul>
+      <li><strong>급여 기준:</strong> 골절, 인대 파열 등 명확한 외상성 손상이 의심될 때.</li>
+      <li><strong>비급여 기준:</strong> 단순 관절통이나 퇴행성 변화에 대한 진단 목적.</li>
+    </ul>
+
+    <button class="btn-cta" onclick="location.href='#contact'">나의 MRI 보장 여부 전문가 상담 신청</button>
+  </section>
+
+  <section id="section-4th-gen-silbi">
+    <span id="section-4th-gen-silbi-anchor" class="anchor"></span>
+    <h2>4세대 실비 보험과 MRI 보장의 변화 (2026년 기준)</h2>
+    <p>2021년 7월 이후 출시된 4세대 실손의료비 보험은 이전 세대 보험과 비교하여 보장 구조에 큰 변화가 있습니다. 특히 비급여 항목에 대한 보장 범위가 크게 달라졌으므로, 4세대 실비 가입자는 MRI 청구 시 더욱 주의해야 합니다.</p>
+
+    <h3>1. 4세대 실비 보험의 주요 특징</h3>
+    <p>4세대 실비 보험은 보험료가 저렴해진 대신 비급여 항목에 대한 보장이 축소되고 자기부담금이 증가했습니다. 급여 항목은 이전과 유사하게 보장되지만, 비급여 항목은 보장 비율이 70%로 낮아지거나 특정 비급여 항목(도수치료, 주사제, MRI)의 경우 별도 특약으로 분리되기도 했습니다.</p>
+
+    <h3>2. MRI 관련 4세대 실비의 변화</h3>
+    <p>4세대 실비 보험의 가장 큰 변화는 비급여 특약의 분리입니다. MRI 촬영 비용이 비급여 항목으로 분류될 경우, 4세대 실비 가입자는 다음과 같은 기준을 따릅니다:</p>
+    <ul class="checklist">
+      <li><strong>비급여 특약 가입 여부 확인:</strong> MRI가 비급여 항목으로 처리될 경우, 비급여 특약에 가입되어 있지 않다면 보장이 불가능할 수 있습니다.</li>
+      <li><strong>자기부담금 증가:</strong> 비급여 항목은 30%의 자기부담금이 적용되며, 연간 한도가 설정됩니다.</li>
+      <li><strong>보장 축소:</strong> 기존 실비 보험(1~3세대)이 비급여 항목도 80~90% 보장하던 것과 달리 4세대는 보장 비율이 낮아졌습니다.</li>
+    </ul>
+
+    <div class="info-box">
+      <p><strong>참고:</strong> 2026년 현재 기준으로, 실비 보험 약관은 가입 시점의 약관을 따르므로, 자신이 가입한 실비 보험의 세대(1, 2, 3, 4세대)를 정확히 확인하는 것이 중요합니다.</p>
+    </div>
+
+    <h3>세대별 실비 보험 MRI 보장 비교 (예시)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>1~2세대 실비 보험</th>
+          <th>3세대 실비 보험</th>
+          <th>4세대 실비 보험 (2021년 7월~)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>급여 MRI 보장 비율</td>
+          <td>100% (자기부담금 0) 또는 90% (자기부담금 10%)</td>
+          <td>100% (자기부담금 0) 또는 90% (자기부담금 10%)</td>
+          <td>급여 80% (상급병원 20% / 일반병원 10% 자기부담금)</td>
+        </tr>
+        <tr>
+          <td>비급여 MRI 보장 비율</td>
+          <td>80~90% (자기부담금 10~20%)</td>
+          <td>80~90% (자기부담금 10~20%)</td>
+          <td>70% (30% 자기부담금)</td>
+        </tr>
+        <tr>
+          <td>특징</td>
+          <td>보장 범위가 넓음. 비급여도 비교적 높게 보장.</td>
+          <td>일부 비급여 특약 분리 시작. MRI 보장은 아직 양호.</td>
+          <td>급여와 비급여를 분리하여 보장. 비급여 MRI 보장 축소.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="section-claims-guide">
+    <span id="section-claims-guide-anchor" class="anchor"></span>
+    <h2>MRI 실비 보험 청구 방법 및 필수 서류 안내</h2>
+    <p>MRI 촬영 후 실비 보험금을 청구하기 위해서는 정확한 절차와 서류 준비가 필수적입니다. 누락된 서류로 인해 보험금 청구가 지연되거나 거절되는 사례가 많으므로, 아래 체크리스트를 활용하여 꼼꼼하게 준비하세요.</p>
+
+    <h3>1. MRI 실비 청구 절차 (STEP-BY-STEP)</h3>
+    <ol class="numbered-list">
+      <li><strong>진단 및 촬영:</strong> 의사에게 MRI 촬영 필요성을 진단받고, 급여 항목인지 비급여 항목인지 확인합니다.</li>
+      <li><strong>서류 발급 요청:</strong> 병원에서 보험금 청구에 필요한 서류를 발급받습니다.</li>
+      <li><strong>보험사 접수:</strong> 보험사 앱, 홈페이지, 팩스 등을 통해 서류를 제출합니다.</li>
+      <li><strong>심사 및 지급:</strong> 보험사 심사 후 보험금이 지급됩니다.</li>
+    </ol>
+
+    <h3>2. 필수 제출 서류 체크리스트</h3>
+    <ul class="checklist">
+      <li><strong>진료비 계산서/영수증:</strong> 병원에서 발급받는 것으로, 급여/비급여 항목이 구분되어 있어야 합니다.</li>
+      <li><strong>진료비 세부 내역서:</strong> MRI 촬영 비용뿐만 아니라 동반된 진료 항목(의사 진찰료, 약물 등)이 상세히 기재된 서류.</li>
+      <li><strong>진단서 또는 진단명(질병코드)이 기재된 서류:</strong> MRI 촬영이 필요한 의학적 근거를 입증하는 핵심 서류입니다. (소견서, 확인서 등)</li>
+      <li><strong>MRI 판독 결과지:</strong> 보험사 심사 시 MRI 촬영의 필요성과 진단 결과를 확인하기 위해 요구될 수 있습니다.</li>
+    </ul>
+
+    <h3>3. 주의사항: 보험사 심사 기준</h3>
+    <p>보험사는 MRI 촬영이 '치료 목적'이었는지 '단순 검진 목적'이었는지 판단하기 위해 제출된 서류를 면밀히 심사합니다. 단순히 'MRI 촬영'이라는 항목만으로는 청구가 어렵고, 의사가 명확한 질병 코드를 부여하고 진단서에 '질병의 확진'을 위해 필요했다는 소견을 기재하는 것이 중요합니다.</p>
+    <div class="info-box">
+      <p><strong>네이버 지식iN 키워드 분석 결과:</strong> 'MRI 실비 청구 거절 사유'를 검색하는 이용자가 많습니다. 거절되는 주요 이유는 '단순 검진 목적', '약관상 보장하지 않는 질병코드', '제출 서류 불충분' 등입니다. 이 점을 유의하여 서류를 준비해야 합니다.</p>
+    </div>
+  </section>
+
+  <section id="section-faq">
+    <span id="section-faq-anchor" class="anchor"></span>
+    <h2>자주 묻는 질문 (FAQ) 및 전문가 조언</h2>
+    <h3>Q1: 건강검진에서 뇌 MRI를 찍었는데 실비 청구가 가능한가요?</h3>
+    <p>A: 건강검진은 예방 목적으로 간주되므로 원칙적으로 실비 청구가 어렵습니다. 다만, 검진 중 뇌종양이나 뇌혈관 질환이 발견되어 추가적인 정밀 검사를 진행한 경우에는 일부 보장될 여지가 있습니다. 이 경우에도 비급여 항목은 4세대 실비 보험에서 보장이 제한될 수 있습니다.</p>
+
+    <h3>Q2: 의사가 비급여 MRI를 권유했는데 무조건 보장이 안 되나요?</h3>
+    <p>A: 비급여 MRI라도 실비 보험 약관에 따라 보장이 가능할 수 있습니다. 1~3세대 실비 보험 가입자의 경우 비급여 항목도 80~90% 보장되지만, 4세대 실비 보험 가입자는 비급여 특약에 가입되어 있는지 확인해야 합니다. 보장 여부를 정확히 판단하기 위해서는 사전에 보험 전문가와 상담하는 것이 좋습니다.</p>
+
+    <h3>Q3: MRI 촬영 후 한참 뒤에 청구해도 되나요? 청구 기간이 있나요?</h3>
+    <p>A: 보험금 청구 소멸 시효는 3년입니다. 즉, 진료받은 날로부터 3년 이내에는 청구가 가능합니다. 하지만 서류 분실이나 청구 지연으로 인한 불편을 줄이기 위해 가능한 한 빨리 청구하는 것이 좋습니다.</p>
+  </section>
+
+  <!-- 외부 신뢰성 사이트 링크 섹션 -->
+  <section id="section-trusted-sources">
+    <h2>관련 공신력 있는 외부 정보 출처</h2>
+    <p>다음은 실비 보험 및 의료 관련 정보를 확인할 수 있는 신뢰할 수 있는 외부 사이트 목록입니다.</p>
+    <ul class="checklist">
+      <li><strong>국민건강보험공단:</strong> <a href="https://www.nhis.or.kr/" target="_blank">https://www.nhis.or.kr/</a> - 급여/비급여 항목 및 건강보험 관련 최신 정책 확인.</li>
+      <li><strong>건강보험심사평가원(HIRA):</strong> <a href="https://www.hira.or.kr/" target="_blank">https://www.hira.or.kr/</a> - 의료기관별 비급여 진료비 정보 및 심사 기준 확인.</li>
+      <li><strong>금융감독원 금융소비자정보 포털 파인:</strong> <a href="http://fine.fss.or.kr/" target="_blank">http://fine.fss.or.kr/</a> - 보험 상품 비교 및 약관 확인.</li>
+      <li><strong>나무위키 실손의료보험 항목:</strong> <a href="https://namu.wiki/w/%EC%8B%A4%EC%86%90%EC%9D%98%EB%A3%8C%EB%B3%B4%ED%97%98" target="_blank">실손의료보험 (나무위키)</a> - 실비 보험 세대별 특징 및 역사적 변화 참고.</li>
+      <li><strong>대한민국 보건복지부:</strong> <a href="https://www.mohw.go.kr/" target="_blank">https://www.mohw.go.kr/</a> - 국가 보건 정책 및 제도 관련 공식 발표.</li>
+    </ul>
+  </section>
+
+  <!-- 사용자 참여를 위한 상세 견적/상담 요청 폼 -->
+  <section id="contact">
+    <span id="contact-anchor" class="anchor"></span>
+    <h2>나의 MRI 실비 청구 가능성 진단 요청</h2>
+    <p>복잡한 실비 보험 약관, 급여/비급여 기준을 전문가와 함께 명확하게 확인하세요. 아래 폼을 작성하시면 2026년 최신 기준으로 나의 보험금 청구 가능 여부를 진단해 드립니다. 개인정보 보호 정책에 따라 안전하게 처리됩니다.</p>
+    <form action="/submit" method="POST">
+      <h3>1. 기본 정보</h3>
+      <label for="name">이름<span style="color:red;">*</span></label>
+      <input type="text" id="name" name="name" required placeholder="예: 홍길동" />
+
+      <label for="phone">연락처<span style="color:red;">*</span></label>
+      <input type="tel" id="phone" name="phone" required placeholder="010-1234-5678" pattern="[0-9\-]+" />
+
+      <h3>2. 보험 가입 및 청구 정보</h3>
+      <label for="insurance-generation">실비 보험 가입 시기/세대 (선택)<span style="color:red;">*</span></label>
+      <select id="insurance-generation" name="insurance_generation" required>
+        <option value="">선택하세요</option>
+        <option value="1세대">1세대 (2009년 9월 이전)</option>
+        <option value="2세대">2세대 (2009년 10월 ~ 2017년 3월)</option>
+        <option value="3세대">3세대 (2017년 4월 ~ 2021년 6월)</option>
+        <option value="4세대">4세대 (2021년 7월 이후)</option>
+        <option value="모름">가입 시기/세대 모름</option>
+      </select>
+
+      <label for="mri-part">MRI 촬영 부위<span style="color:red;">*</span></label>
+      <select id="mri-part" name="mri_part" required>
+        <option value="">선택하세요</option>
+        <option value="뇌">뇌 (머리)</option>
+        <option value="척추">척추 (허리/목)</option>
+        <option value="관절">관절 (무릎/어깨 등)</option>
+        <option value="기타">기타 부위</option>
+      </select>
+
+      <label for="symptoms">MRI 촬영 사유 (증상)<span style="color:red;">*</span></label>
+      <textarea id="symptoms" name="symptoms" rows="3" required placeholder="예: 허리 통증으로 병원 방문, 다리 저림 증상 동반 등"></textarea>
+
+      <label for="diagnosis">진단명 (의사에게 받은 진단명을 기재해주세요)</label>
+      <input type="text" id="diagnosis" name="diagnosis" placeholder="예: 요추 추간판 탈출증" />
+
+      <h3>3. 청구 경험 및 추가 문의</h3>
+      <label for="claim-status">청구 진행 상황</label>
+      <select id="claim-status" name="claim_status">
+        <option value="미청구">아직 청구 전</option>
+        <option value="청구진행중">청구 진행 중</option>
+        <option value="청구거절">청구 거절됨 (재심사 필요)</option>
+      </select>
+
+      <label for="additional-notes">추가 요청 사항</label>
+      <textarea id="additional-notes" name="additional_notes" rows="4" placeholder="예: 병원비 총액, 보험사에서 요구하는 서류 등"></textarea>
+
+      <button type="submit" class="btn-cta">청구 가능성 진단 요청하기</button>
+    </form>
+  </section>
+
+  <footer>
+    <section>
+      <p style="text-align: center; font-size: 0.9em; color: #666;">
+        © 2026 실비 보험 정보 가이드. 본 페이지의 정보는 보험 전문가의 일반적인 해석이며, 개별 약관에 따라 다를 수 있습니다. 정확한 내용은 반드시 해당 보험사의 약관을 확인하시기 바랍니다.
+      </p>
+      <p style="text-align: center; font-size: 0.8em; color: #888;">
+        Disclaimer: This content provides general information based on current insurance trends and regulations (circa 2026), not individual legal or financial advice.
+      </p>
+    </section>
+  </footer>
+
+
+  
